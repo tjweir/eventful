@@ -5,12 +5,12 @@
 
 module Main where
 
-import Control.Concurrent.STM
-import Control.Monad (forever, void)
-import Safe (readMay)
+import           Control.Concurrent.STM
+import           Control.Monad          (forever, void)
+import           Safe                   (readMay)
 
-import Eventful
-import Eventful.Store.Memory
+import           Eventful
+import           Eventful.Store.Memory
 
 main :: IO ()
 main = do
@@ -77,6 +77,7 @@ data CounterCommand
   = IncrementCounter Int
   | DecrementCounter Int
   | ResetCounter
+  | SetToTen
   deriving (Eq, Show, Read)
 
 
@@ -90,6 +91,7 @@ handlerCounterCommand (CounterState k) (DecrementCounter n) =
   if k - n >= 0
   then [CounterAmountAdded (-n)]
   else [CounterOutOfBounds (k - n)]
+handlerCounterCommand (CounterState k) SetToTen = [CounterAmountAdded (-k + 10)]
 handlerCounterCommand (CounterState k) ResetCounter = [CounterAmountAdded (-k)]
 
 -- | This ties all of the counter types into a CommandHandler.
