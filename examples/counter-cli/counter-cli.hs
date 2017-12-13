@@ -33,7 +33,7 @@ readAndHandleCommand writer reader = do
   putStrLn $ "Current state: " ++ show currentState
 
   -- Ask user for command
-  putStrLn "Enter a command. (IncrementCounter n, DecrementCounter n, ResetCounter):"
+  putStrLn "Enter a command. (IncrementCounter n, DecrementCounter n, ResetCounter, SetToTen):"
   input <- getLine
 
   -- Parse command and handle
