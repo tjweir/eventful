@@ -5,13 +5,12 @@ module Bank.CLI.Options
   , parseDatabaseFileOption
   ) where
 
-import Data.Monoid ((<>))
-import qualified Data.Text as T
-import Options.Applicative
+import           Data.Monoid         ((<>))
+import qualified Data.Text           as T
+import           Options.Applicative
 
-import Eventful
-
-import Bank.Models
+import           Bank.Models
+import           Eventful
 
 runOptionsParser :: IO Options
 runOptionsParser = execParser $ info (helper <*> parseOptions) (fullDesc <> progDesc "eventful bank CLI")
@@ -19,7 +18,7 @@ runOptionsParser = execParser $ info (helper <*> parseOptions) (fullDesc <> prog
 data Options
   = Options
   { optionsDatabaseFile :: FilePath
-  , optionsCommand :: CLICommand
+  , optionsCommand      :: CLICommand
   } deriving (Show)
 
 data CLICommand

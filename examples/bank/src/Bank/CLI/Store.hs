@@ -8,17 +8,17 @@ module Bank.CLI.Store
   , printJSONPretty
   ) where
 
-import Control.Monad.IO.Class (MonadIO (..))
-import Data.Aeson
-import Data.Aeson.Encode.Pretty
-import qualified Data.ByteString.Lazy.Char8 as BSL
-import Database.Persist.Sqlite
+import           Control.Monad.IO.Class               (MonadIO (..))
+import           Data.Aeson
+import           Data.Aeson.Encode.Pretty
+import qualified Data.ByteString.Lazy.Char8           as BSL
+import           Database.Persist.Postgresql
 
-import Eventful
-import Eventful.Store.Sqlite
+import           Eventful
+import           Eventful.Store.Postgresql
 
-import Bank.Models
-import Bank.ProcessManagers.TransferManager
+import           Bank.Models
+import           Bank.ProcessManagers.TransferManager
 
 runDB :: ConnectionPool -> SqlPersistT IO a -> IO a
 runDB = flip runSqlPool
@@ -29,7 +29,7 @@ cliEventStoreReader = serializedVersionedEventStoreReader jsonStringSerializer $
 cliEventStoreWriter :: (MonadIO m) => VersionedEventStoreWriter (SqlPersistT m) BankEvent
 cliEventStoreWriter = synchronousEventBusWrapper writer handlers
   where
-    sqlStore = sqliteEventStoreWriter defaultSqlEventStoreConfig
+    sqlStore = postgresqlEventStoreWriter defaultSqlEventStoreConfig
     writer = serializedEventStoreWriter jsonStringSerializer sqlStore
     handlers =
       [ eventPrinter

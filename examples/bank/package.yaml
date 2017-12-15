@@ -11,7 +11,7 @@ dependencies:
   - base >= 4.9 && < 5
   - eventful-core
   - eventful-sqlite
-
+  - eventful-postgresql
   - aeson
   - aeson-pretty
   - bytestring
@@ -23,6 +23,7 @@ dependencies:
   - optparse-applicative
   - persistent
   - persistent-sqlite
+  - persistent-postgresql
   - persistent-template
   - safe
   - stm

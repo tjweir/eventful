@@ -2,15 +2,16 @@ module Bank.CLI.RunCommand
   ( runCLICommand
   ) where
 
-import Control.Monad (void)
-import Database.Persist.Sqlite
+import           Control.Monad                    (void)
+--import Database.Persist.Sqlite
+import           Database.Persist.Postgresql
 
-import Eventful
+import           Eventful
 
-import Bank.Models
-import Bank.CLI.Options
-import Bank.CLI.Store
-import Bank.ReadModels.CustomerAccounts
+import           Bank.CLI.Options
+import           Bank.CLI.Store
+import           Bank.Models
+import           Bank.ReadModels.CustomerAccounts
 
 runCLICommand :: ConnectionPool -> CLICommand -> IO ()
 runCLICommand pool (CreateCustomerCLI createCommand) = do
@@ -29,7 +30,7 @@ runCLICommand pool (ViewCustomerAccountsCLI name) = do
     allCustomerAccounts = latestProjection customerAccountsProjection (streamEventEvent <$> events)
     thisCustomerAccounts = getCustomerAccountsFromName allCustomerAccounts name
   case thisCustomerAccounts of
-    [] -> putStrLn "No accounts found"
+    []       -> putStrLn "No accounts found"
     accounts -> mapM_ printJSONPretty accounts
 runCLICommand pool (OpenAccountCLI openCommand) = do
   uuid <- uuidNextRandom

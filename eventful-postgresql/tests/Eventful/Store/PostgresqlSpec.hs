@@ -2,18 +2,18 @@
 
 module Eventful.Store.PostgresqlSpec (spec) where
 
-import Control.Monad.Reader (ask)
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.UTF8 as UTF8
-import Data.Maybe (maybe)
-import Data.Monoid ((<>))
-import Data.Text (Text, intercalate)
-import Database.Persist.Postgresql
-import System.Environment (lookupEnv)
-import Test.Hspec
+import           Control.Monad.Reader        (ask)
+import           Data.ByteString             (ByteString)
+import qualified Data.ByteString.UTF8        as UTF8
+import           Data.Maybe                  (maybe)
+import           Data.Monoid                 ((<>))
+import           Data.Text                   (Text, intercalate)
+import           Database.Persist.Postgresql
+import           System.Environment          (lookupEnv)
+import           Test.Hspec
 
-import Eventful.Store.Postgresql
-import Eventful.TestHelpers
+import           Eventful.Store.Postgresql
+import           Eventful.TestHelpers
 
 spec :: Spec
 spec = do

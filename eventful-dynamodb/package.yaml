@@ -9,7 +9,7 @@ category: Database,Eventsourcing,AWS
 license: MIT
 license-file: LICENSE.md
 
-github: jdreaver/eventful
+-- github: jdreaver/eventful
 
 dependencies:
   - base >= 4.9 && < 5
