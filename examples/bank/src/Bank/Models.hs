@@ -12,6 +12,10 @@ module Bank.Models
   , customerCommandSerializer
   , customerBankProjection
   , customerBankCommandHandler
+  , vendorEventSerializer
+  , vendorCommandSerializer
+  , vendorBankProjection
+  , vendorBankCommandHandler
   , module X
   ) where
 
@@ -24,11 +28,13 @@ import Eventful.TH
 import Bank.Json
 import Bank.Models.Account as X
 import Bank.Models.Customer as X
+import Bank.Models.Vendor as X
 
 constructSumType "BankEvent" (defaultSumTypeOptions { sumTypeOptionsTagOptions = ConstructTagName (++ "Event") }) $
   concat
   [ accountEvents
   , customerEvents
+  , vendorEvents
   ]
 
 deriving instance Show BankEvent
@@ -40,11 +46,14 @@ constructSumType "BankCommand" (defaultSumTypeOptions { sumTypeOptionsTagOptions
   concat
   [ accountCommands
   , customerCommands
+  , vendorCommands
   ]
 
 deriving instance Show BankCommand
 deriving instance Eq BankCommand
 
+
+-- Accounts
 mkSumTypeSerializer "accountEventSerializer" ''AccountEvent ''BankEvent
 mkSumTypeSerializer "accountCommandSerializer" ''AccountCommand ''BankCommand
 
@@ -54,6 +63,7 @@ accountBankProjection = serializedProjection accountProjection accountEventSeria
 accountBankCommandHandler :: CommandHandler Account BankEvent BankCommand
 accountBankCommandHandler = serializedCommandHandler accountCommandHandler accountEventSerializer accountCommandSerializer
 
+-- Customers
 mkSumTypeSerializer "customerEventSerializer" ''CustomerEvent ''BankEvent
 mkSumTypeSerializer "customerCommandSerializer" ''CustomerCommand ''BankCommand
 
@@ -62,3 +72,15 @@ customerBankProjection = serializedProjection customerProjection customerEventSe
 
 customerBankCommandHandler :: CommandHandler Customer BankEvent BankCommand
 customerBankCommandHandler = serializedCommandHandler customerCommandHandler customerEventSerializer customerCommandSerializer
+
+-- Vendors
+-- Merge VendorEvents to Bank Events  
+mkSumTypeSerializer "vendorEventSerializer" ''VendorEvent ''BankEvent
+-- Merge VendorEvents to Bank Events  
+mkSumTypeSerializer "vendorCommandSerializer" ''VendorCommand ''BankCommand
+
+vendorBankProjection :: Projection Vendor BankEvent
+vendorBankProjection = serializedProjection vendorProjection vendorEventSerializer
+
+vendorBankCommandHandler :: CommandHandler Vendor BankEvent BankCommand
+vendorBankCommandHandler = serializedCommandHandler vendorCommandHandler vendorEventSerializer vendorCommandSerializer

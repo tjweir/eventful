@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module Bank.Models.Customer.CommandHandler
@@ -6,7 +7,6 @@ module Bank.Models.Customer.CommandHandler
   ) where
 
 import SumTypes.TH
-
 import Eventful
 
 import Bank.Models.Customer.Commands
@@ -19,7 +19,12 @@ handleCustomerCommand :: Customer -> CustomerCommand -> [CustomerEvent]
 handleCustomerCommand customer (CreateCustomerCustomerCommand (CreateCustomer name)) =
   case customerName customer of
     Nothing -> [CustomerCreatedCustomerEvent $ CustomerCreated name]
-    Just _ -> [CustomerCreationRejectedCustomerEvent $ CustomerCreationRejected "Customer already exists"]
+    Just _  -> [CustomerCreationRejectedCustomerEvent $ CustomerCreationRejected "Customer already exists."]
+handleCustomerCommand customer (UpdateCustomerCustomerCommand (UpdateCustomer uuid str)) =
+  case customerName customer of
+    Just _  -> [CustomerUpdatedCustomerEvent $ CustomerUpdated str]
+    Nothing -> [CustomerUpdateRejectedCustomerEvent $ CustomerUpdateRejected "Customer does not exist."]
 
+  
 customerCommandHandler :: CommandHandler Customer CustomerEvent CustomerCommand
-customerCommandHandler = CommandHandler handleCustomerCommand customerProjection
+customerCommandHandler  = CommandHandler handleCustomerCommand customerProjection

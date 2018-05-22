@@ -25,9 +25,12 @@ data Options
 data CLICommand
   = CreateCustomerCLI CreateCustomer
   | ViewAccountCLI UUID
+  | ViewCustomerCLI UUID
   | ViewCustomerAccountsCLI String
   | OpenAccountCLI OpenAccount
   | TransferToAccountCLI UUID Double UUID
+  | CreateVendorCLI CreateVendor
+  | UpdateCustomerCLI UUID String
   deriving (Show, Eq)
 
 parseOptions :: Parser Options
@@ -35,11 +38,14 @@ parseOptions =
   Options <$>
   parseDatabaseFileOption <*>
   subparser (
-    command "create-customer" (info (helper <*> parseCreateCustomer) (progDesc "Create a customer")) <>
-    command "view-account" (info (helper <*> parseViewAccount) (progDesc "View an account")) <>
-    command "view-customer-accounts" (info (helper <*> parseViewCustomerAccounts) (progDesc "View all customer accounts")) <>
-    command "open-account" (info (helper <*> parseOpenAccount) (progDesc "Open a new account")) <>
-    command "transfer" (info (helper <*> parseTransfer) (progDesc "Transfer funds to an account"))
+    command "create-customer"           (info (helper <*> parseCreateCustomer) (progDesc "Create a customer"))
+    <> command "view-customer"          (info (helper <*> parseViewCustomer) (progDesc "View a customer")) 
+    <> command "view-account"           (info (helper <*> parseViewAccount) (progDesc "View an account")) 
+    <> command "view-customer-accounts" (info (helper <*> parseViewCustomerAccounts) (progDesc "View all customer accounts")) 
+    <> command "open-account"           (info (helper <*> parseOpenAccount) (progDesc "Open a new account")) 
+    <> command "transfer"               (info (helper <*> parseTransfer) (progDesc "Transfer funds to an account")) 
+    <> command "create-vendor"          (info (helper <*> parseCreateVendor) (progDesc "Create a vendor")) 
+    <> command "update-customer"        (info (helper <*> parseUpdateCustomer) (progDesc "Update a Customer"))
   )
 
 parseDatabaseFileOption :: Parser FilePath
@@ -69,6 +75,16 @@ parseViewAccount =
     metavar "uuid" <>
     help "UUID for account stream"
   )
+
+parseViewCustomer :: Parser CLICommand
+parseViewCustomer =
+  ViewCustomerCLI <$>
+  option parseUUID (
+    long "customer-id" <>
+    metavar "uuid" <>
+    help "UUID for customer"
+  )
+
 
 parseViewCustomerAccounts :: Parser CLICommand
 parseViewCustomerAccounts =
@@ -111,6 +127,29 @@ parseTransfer =
     long "target-id" <>
     metavar "uuid" <>
     help "Target account UUID"
+  )
+
+parseCreateVendor :: Parser CLICommand
+parseCreateVendor =
+  CreateVendorCLI . CreateVendor <$>
+  strOption (
+    long "name" <>
+    metavar "name" <>
+    help "Vendor name"
+  )
+
+parseUpdateCustomer :: Parser CLICommand
+parseUpdateCustomer =
+  UpdateCustomerCLI <$>
+  option parseUUID (
+    long "owner-id" <>
+    metavar "uuid" <>
+    help "UUID for the customer"
+  ) <*>
+  strOption (
+    long "name" <>
+    metavar "name" <>
+    help "Customer's name"
   )
 
 parseUUID :: ReadM UUID

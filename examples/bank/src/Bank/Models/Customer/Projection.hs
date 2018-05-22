@@ -30,6 +30,9 @@ deriving instance Eq CustomerEvent
 handleCustomerEvent :: Customer -> CustomerEvent -> Customer
 handleCustomerEvent customer (CustomerCreatedCustomerEvent (CustomerCreated name)) = customer { customerName = Just name }
 handleCustomerEvent customer (CustomerCreationRejectedCustomerEvent _) = customer
+handleCustomerEvent customer (CustomerUpdatedCustomerEvent (CustomerUpdated name)) = customer { customerName = Just name }
+handleCustomerEvent customer (CustomerUpdateRejectedCustomerEvent _) = customer
+
 
 customerProjection :: Projection Customer CustomerEvent
 customerProjection = Projection (Customer Nothing) handleCustomerEvent

@@ -102,5 +102,6 @@ handleAccountEvent account (AccountCreditedFromTransferAccountEvent AccountCredi
   account
   & accountBalance +~ accountCreditedFromTransferAmount
 
+-- | Default account
 accountProjection :: Projection Account AccountEvent
 accountProjection = Projection accountDefault handleAccountEvent

@@ -5,12 +5,12 @@
 
 module Main where
 
-import Control.Concurrent.STM
-import Control.Monad (forever, void)
-import Safe (readMay)
+import           Control.Concurrent.STM
+import           Control.Monad          (forever, void)
+import           Safe                   (readMay)
 
-import Eventful
-import Eventful.Store.Memory
+import           Eventful
+import           Eventful.Store.Memory
 
 main :: IO ()
 main = do
@@ -47,8 +47,15 @@ readAndHandleCommand writer reader = do
   putStrLn ""
 
 -- | This is the state for our Counter projection.
-newtype CounterState = CounterState { unCounterState :: Int }
-  deriving (Eq, Show)
+newtype CounterState = CounterState { unCounterState :: Int } deriving (Eq, Show)
+
+-- | The commands we can use against our counter. We can increment or decrement
+-- the counter, and also reset it.
+data CounterCommand
+  = IncrementCounter Int
+  | DecrementCounter Int
+  | ResetCounter
+  deriving (Eq, Show, Read)
 
 -- | This specifies the possible events we can use for our counter. In our
 -- case, we only have one event to add an amount to a counter. Notice the use
@@ -60,25 +67,8 @@ data CounterEvent
 
 -- | This ties together the state and event types into a 'Projection'.
 type CounterProjection = Projection CounterState CounterEvent
-
 counterProjection :: CounterProjection
-counterProjection =
-  Projection
-  (CounterState 0)
-  handleCounterEvent
-
-handleCounterEvent :: CounterState -> CounterEvent -> CounterState
-handleCounterEvent (CounterState k) (CounterAmountAdded x) = CounterState (k + x)
-handleCounterEvent state (CounterOutOfBounds _) = state
-
--- | The commands we can use against our counter. We can increment or decrement
--- the counter, and also reset it.
-data CounterCommand
-  = IncrementCounter Int
-  | DecrementCounter Int
-  | ResetCounter
-  deriving (Eq, Show, Read)
-
+counterProjection = Projection (CounterState 0) handleCounterEvent
 
 -- | This function validates commands and produces either an error or an event.
 handlerCounterCommand :: CounterState -> CounterCommand -> [CounterEvent]
@@ -97,3 +87,8 @@ type CounterCommandHandler = CommandHandler CounterState CounterEvent CounterCom
 
 counterCommandHandler :: CounterCommandHandler
 counterCommandHandler = CommandHandler handlerCounterCommand counterProjection
+
+-- | Event Handler
+handleCounterEvent :: CounterState -> CounterEvent -> CounterState
+handleCounterEvent (CounterState k) (CounterAmountAdded x) = CounterState (k + x)
+handleCounterEvent state (CounterOutOfBounds _) = state
