@@ -13,18 +13,19 @@ import Bank.CLI.Store
 import Bank.ReadModels.CustomerAccounts
 
 runCLICommand :: ConnectionPool -> CLICommand -> IO ()
-runCLICommand pool (CreateCustomerCLI createCommand) = do
+runCLICommand pool (CreateCustomerCLI name location) = do
   uuid <- uuidNextRandom
   putStr "Attempting to create customer with UUID: "
   print uuid
-  let command = CreateCustomerCommand createCommand
+  let command = CreateCustomerCommand $ CreateCustomer name location
   void $ runDB pool $ applyCommandHandler cliEventStoreWriter cliEventStoreReader customerBankCommandHandler uuid command
 
-runCLICommand pool (UpdateCustomerCLI uuid name) = do
+runCLICommand pool (UpdateCustomerCLI uuid name location) = do
   putStr "Attempting to update customer with UUID: "
   print uuid
   print name
-  let command = UpdateCustomerCommand $ UpdateCustomer uuid name
+  print location
+  let command = UpdateCustomerCommand $ UpdateCustomer uuid name location
   void $ runDB pool $ applyCommandHandler cliEventStoreWriter cliEventStoreReader customerBankCommandHandler uuid command
 
 runCLICommand pool (ViewAccountCLI uuid) = do

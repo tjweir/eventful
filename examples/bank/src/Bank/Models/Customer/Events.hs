@@ -23,6 +23,7 @@ customerEvents =
 data CustomerCreated =
   CustomerCreated
   { customerCreatedName :: String
+  , customerCreatedLoc  :: String
   } deriving (Show, Eq)
 
 data CustomerCreationRejected
@@ -33,6 +34,7 @@ data CustomerCreationRejected
 data CustomerUpdated =
   CustomerUpdated
   { customerUpdatedName :: String
+  , customerUpdatedLoc  :: String
   } deriving (Show, Eq)
 
 data CustomerUpdateRejected

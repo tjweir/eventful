@@ -41,7 +41,7 @@ getCustomerAccountsFromName CustomerAccounts{..} name = fromMaybe [] $ do
   return $ mapMaybe lookupAccount accountIds
 
 handleCustomerAccountsEvent :: CustomerAccounts -> VersionedStreamEvent BankEvent -> CustomerAccounts
-handleCustomerAccountsEvent accounts (StreamEvent uuid _ (CustomerCreatedEvent (CustomerCreated name))) =
+handleCustomerAccountsEvent accounts (StreamEvent uuid _ (CustomerCreatedEvent (CustomerCreated name location))) =
   accounts
   & customerAccountsCustomerIdsByName %~ Map.insert name uuid
 handleCustomerAccountsEvent accounts (StreamEvent uuid _ (AccountOpenedEvent event@(AccountOpened customerId _))) =

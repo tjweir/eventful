@@ -21,12 +21,14 @@ customerCommands =
 data CreateCustomer =
   CreateCustomer
   { createCustomerData :: String
+  , createCustomerLocation :: String
   } deriving (Show, Eq)
 
 data UpdateCustomer =
   UpdateCustomer
   { updateCustomerUUID :: UUID
   , updateCustomerName :: String
+  , updateCustomerLocation :: String
   } deriving (Show, Eq)
 
 

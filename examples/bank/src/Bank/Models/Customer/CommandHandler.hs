@@ -16,13 +16,13 @@ import Bank.Models.Customer.Projection
 constructSumType "CustomerCommand" (defaultSumTypeOptions { sumTypeOptionsTagOptions = AppendTypeNameToTags }) customerCommands
 
 handleCustomerCommand :: Customer -> CustomerCommand -> [CustomerEvent]
-handleCustomerCommand customer (CreateCustomerCustomerCommand (CreateCustomer name)) =
+handleCustomerCommand customer (CreateCustomerCustomerCommand (CreateCustomer name location)) =
   case customerName customer of
-    Nothing -> [CustomerCreatedCustomerEvent $ CustomerCreated name]
+    Nothing -> [CustomerCreatedCustomerEvent $ CustomerCreated name location]
     Just _  -> [CustomerCreationRejectedCustomerEvent $ CustomerCreationRejected "Customer already exists."]
-handleCustomerCommand customer (UpdateCustomerCustomerCommand (UpdateCustomer uuid str)) =
+handleCustomerCommand customer (UpdateCustomerCustomerCommand (UpdateCustomer uuid name location)) =
   case customerName customer of
-    Just _  -> [CustomerUpdatedCustomerEvent $ CustomerUpdated str]
+    Just _  -> [CustomerUpdatedCustomerEvent $ (CustomerUpdated name location)]
     Nothing -> [CustomerUpdateRejectedCustomerEvent $ CustomerUpdateRejected "Customer does not exist."]
 
   

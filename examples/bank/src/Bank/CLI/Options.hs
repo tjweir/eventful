@@ -23,14 +23,14 @@ data Options
   } deriving (Show)
 
 data CLICommand
-  = CreateCustomerCLI CreateCustomer
+  = CreateCustomerCLI String String
   | ViewAccountCLI UUID
   | ViewCustomerCLI UUID
   | ViewCustomerAccountsCLI String
   | OpenAccountCLI OpenAccount
   | TransferToAccountCLI UUID Double UUID
   | CreateVendorCLI CreateVendor
-  | UpdateCustomerCLI UUID String
+  | UpdateCustomerCLI UUID String String
   deriving (Show, Eq)
 
 parseOptions :: Parser Options
@@ -60,11 +60,16 @@ parseDatabaseFileOption =
 
 parseCreateCustomer :: Parser CLICommand
 parseCreateCustomer =
-  CreateCustomerCLI . CreateCustomer <$>
+  CreateCustomerCLI <$>
   strOption (
     long "name" <>
     metavar "name" <>
     help "Customer's name"
+  ) <*>
+  strOption (
+    long "location" <>
+    metavar "location" <>
+    help "Customer's Location"
   )
 
 parseViewAccount :: Parser CLICommand
@@ -150,7 +155,13 @@ parseUpdateCustomer =
     long "name" <>
     metavar "name" <>
     help "Customer's name"
+  ) <*>
+  strOption (
+    long "location" <>
+    metavar "location" <>
+    help "Customer's Location"
   )
+
 
 parseUUID :: ReadM UUID
 parseUUID = maybe (readerError "Could not parse UUID") return . uuidFromText =<< (T.pack <$> str)
